@@ -24,7 +24,7 @@ public class CosmosTransactionAdapter implements TransactionRepositoryPort {
     @Override
     public Mono<Transaction> save(Transaction transaction) {
         return Mono.fromCallable(() -> {
-            cosmosContainer.createItem(transaction, new PartitionKey(transaction.getId()),
+            cosmosContainer.upsertItem(transaction, new PartitionKey(transaction.getId()),
                     new CosmosItemRequestOptions());
             log.info("Transaction saved to Cosmos DB for order: {}", transaction.getId());
             return transaction;
