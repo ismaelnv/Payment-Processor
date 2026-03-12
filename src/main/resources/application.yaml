@@ -1,0 +1,22 @@
+server:
+  port: ${SERVER_PORT:8082}
+
+spring:
+  application:
+    name: Payment-Processor
+
+azure:
+  queue:
+    connection-string: ${AZURE_QUEUE_CONNECTION_STRING:DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1}
+    queue-name: ${AZURE_QUEUE_QUEUE_NAME:orders-queue}
+    poll-interval-ms: ${AZURE_QUEUE_POLL_INTERVAL_MS:5000}
+
+  blob:
+    connection-string: ${AZURE_BLOB_CONNECTION_STRING:DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1}
+    container-name: ${AZURE_BLOB_CONTAINER_NAME:audit}
+
+  cosmos:
+    endpoint: ${AZURE_COSMOS_ENDPOINT:https://localhost:8081}
+    key: ${AZURE_COSMOS_KEY:C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==}
+    database-name: ${AZURE_COSMOS_DATABASE_NAME:payment-db}
+    container-name: ${AZURE_COSMOS_CONTAINER_NAME:transactions}
