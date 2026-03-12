@@ -9,13 +9,58 @@ Microservice that consumes orders from Azure Queue Storage, saves transactions t
 - **Java 17**
 - **Maven**
 
+### Architecture Diagram
+
+```mermaid
+graph LR
+    subgraph External
+        OS[Order Service<br/>REST API]
+    end
+
+    subgraph Azure Cloud Services
+        AQ[Azure Queue<br/>Storage]
+        CDB[(Cosmos DB)]
+        BLOB[(Azure Blob<br/>Storage)]
+    end
+
+    subgraph Payment Processor
+        direction TB
+        subgraph Infrastructure - Adapters In
+            QL[AzureQueueListener<br/>Polls every 5s]
+        end
+        subgraph Application
+            UC[ProcessPaymentUseCase]
+        end
+        subgraph Domain
+            ORD[Order]
+            TXN[Transaction]
+        end
+        subgraph Infrastructure - Adapters Out
+            CA[CosmosTransactionAdapter]
+            BA[AzureBlobAuditAdapter]
+        end
+    end
+
+    OS -- HTTP POST /orders --> AQ
+    AQ -- receiveMessages --> QL
+    QL --> UC
+    UC --> ORD
+    ORD --> TXN
+    UC --> CA
+    UC --> BA
+    CA -- upsertItem --> CDB
+    BA -- uploadBlob --> BLOB
+    QL -. deleteMessage .-> AQ
+```
+
 ### Flow
 
-```
-Order Service (REST API) → Azure Queue Storage → Payment Processor → Cosmos DB + Blob Storage
-```
-
-The Payment Processor polls the queue every 5 seconds, consumes messages, saves the transaction to Cosmos DB, and uploads a JSON audit file to Blob Storage.
+1. **Order Service** sends orders via REST API to **Azure Queue Storage**
+2. **AzureQueueListener** polls the queue every 5 seconds and receives messages
+3. **ProcessPaymentUseCase** processes the order and converts it to a Transaction
+4. **CosmosTransactionAdapter** saves the transaction to **Cosmos DB**
+5. **AzureBlobAuditAdapter** uploads a JSON audit file to **Blob Storage**
+6. The message is deleted from the queue after successful processing
 
 ## Prerequisites
 
