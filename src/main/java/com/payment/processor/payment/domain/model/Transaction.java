@@ -19,6 +19,7 @@ public class Transaction {
     private List<OrderItem> items;
     private double totalAmount;
     private LocalDateTime processedAt;
+    private LocalDateTime createdAt;
 
     public static Transaction fromOrder(Order order) {
         return Transaction.builder()
@@ -27,6 +28,7 @@ public class Transaction {
                 .items(order.getItems())
                 .totalAmount(order.getTotalAmount())
                 .processedAt(LocalDateTime.now())
+                .createdAt(order.getCreatedAt())
                 .build();
     }
 }
